@@ -371,7 +371,7 @@ echo Unlocker by linuxxxx
 @adb shell dd if=/sdcard/emmc_appsboot.bin of=/dev/block/mmcblk0p5 bs=4096
 @adb reboot bootloader
 @fastboot devices
-@fastboot flash recovery C:\Lg-Manager\L5\recovery\recovery.img
+@fastboot flash recovery C:\Lg-Manager\L7\recovery\recovery.img
 @fastboot boot C:\Lg-Manager\L7\recovery\recovery.img
 @adb shell rm -rf /cache/recovery
 @adb shell mkdir /cache/recovery
