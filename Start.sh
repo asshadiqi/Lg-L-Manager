@@ -20,14 +20,14 @@ L5=~/Lg-LManager/e610
 L7=~/Lg-LManager/p700
 L32=~/Lg-LManager/e430
 ROOTURL=http://download.chainfire.eu/372/SuperSU/UPDATE-SuperSU-v1.86.zip?retrieve_file=1
-ROOTZIP=~/res/root.zip
+ROOTZIP=~/Lg-LManager/res/root.zip
 DEVICE=
 ACTION=$1
 Choice=
 APK=
 ZIP=
 ROM=
-
+DIR=/sdcard/tmp
 #----------------------------------------------------------------------------------------
 
 
@@ -119,6 +119,7 @@ home () {
   echo "Wrong input"
   fi
   home
+  fi
   }
 
 #      */*****   Install    *****\*
@@ -152,6 +153,7 @@ install () {
   echo "Wrong input"
   fi
   install
+  fi
   }
 
 apk () {
@@ -162,6 +164,7 @@ apk () {
     adb install $APK
     sleep 2
     home
+    fi
     }
 
 rom () {
@@ -171,6 +174,7 @@ rom () {
         break
     else
     rom2
+    fi
     }
 
 rom2 () {
@@ -188,8 +192,181 @@ rom2 () {
     adb sideload $ROM
     echo "Now wait until your phone install rom, about 3 mins"
     sleep 360
-    read -p "If your phone screen is blank with recovery image, press enter or wait"
+    read -p "If your phone screen is blank with recovery background, press enter or wait"
     adb reboot
     echo "Done!"
     home
+    fi
+    }
+
+rom3 () {
+    headerprint
+    echo "Rom installer"
+    adb reboot recovery
+    echo "Wipe /data now!"
+    echo "Then,"
+    read -p "Drag your zip here and press ENTER: " ROM
+    adb shell mkdir $DIR
+    adb push $ROM $DIR
+    echo "Now select install > choose your file (it's on /sdcard)"
+    read -p "When it ends press ENTER"
+    adb shell rm -rf $DIR
+    adb reboot
+    echo "Done!"
+    home
+    fi
+    }
+
+zip () {
+    if  [ "$DEVICE" = "E400" ]
+      then
+        zip3
+        break
+    else
+    zip2
+    fi
+    }
+
+zip2 () {
+    headerprint
+    echo "Zip installer"
+    adb reboot recovery
+    adb shell  rm -rf /cache/recovery
+    adb shell mkdir /cache/recovery
+    adb shell "echo -e '--sideload' > /cache/recovery/command"
+    adb reboot recovery
+    adb wait-for-device
+    read -p "Drag your zip here and press ENTER: " ZIP
+    adb sideload $ZIP
+    echo "Now wait until your phone install zip file.."
+    read -p "Only when your phone screen is blank with recovery background, press enter"
+    adb reboot
+    echo "Done!"
+    home
+    fi
+    }
+
+zip3 () {
+    headerprint
+    echo "Rom installer"
+    adb reboot recovery
+    read -p "Drag your zip here and press ENTER: " ZIP
+    adb shell mkdir $DIR
+    adb push $ZIP $DIR
+    echo "Now select install > choose your file (it's on /sdcard)"
+    read -p "When it ends press ENTER"
+    adb shell rm -rf $DIR
+    adb reboot
+    echo "Done!"
+    home
+    fi
+    }
+
+#      */*****   Unlock    *****\*
+
+unlock () {
+    if  [ "$DEVICE" = "E400" ]
+      then
+        unlock3
+        break
+    if  [ "$DEVICE" = "P610" ]
+      then
+        unlock5
+        break
+    if  [ "$DEVICE" = "P700" ]
+      then
+        unlock7
+        break
+    if  [ "$DEVICE" = "E430" ]
+      then
+        unlock32
+        break
+    else
+    echo "Connected device is not supported"
+    sleep 3
+    exit 0
+    fi
+    }
+
+unlock3 () {
+    printheader
+    echo "Unlocking Lg L3 $DEVICE"
+    echo " "
+    adb reboot bootloader
+    fastboot flash recovery $L3/recovery/recovery.img
+    fastboot boot $L3/recovery/recovery.img
+    adb wait-for-device
+    adb shell mkdir $DIR
+    adb push $ROOTZIP $DIR
+    echo "Now select install > choose your file (it's on /sdcard/root.zip)"
+    read -p "When it ends press ENTER"
+    adb shell rm -rf $DIR
+    adb reboot
+    read -p "Done!"
+    home
+    fi
+    }
+
+unlock5 () {
+    printheader
+    echo "Unlocking Lg L5 $DEVICE"
+    echo " "
+    adb reboot bootloader
+    fastboot boot $L5/recovery/recovery.img
+    adb wait-for-device
+    adb shell mkdir $DIR
+    adb push $L5/bootloader/emmc_appsboot.bin $DIR
+    adb shell dd if=/sdcard/tmp/emmc_appsboot.bin of=/dev/block/mmcblk0p5
+    adb reboot bootloader
+    fastboot flash recovery $L5/recovery/recovery.img
+    fastboot boot $L5/recovery/recovery.img
+    adb wait-for-device
+    adb shell rm -rf /cache/recovery
+    adb shell mkdir /cache/recovery
+    adb shell "echo -e '--sideload' > /cache/recovery/command"
+    adb reboot bootloader
+    fastboot boot $L5/recovery/recovery.img
+    adb wait-for-device
+    adb sideload $ROOTZIP
+    echo "Finishing..."
+    read -p "When screen become blank with recovery background, press ENTER"
+    adb reboot
+    echo "Unlocked !"
+    home
+    fi
+    }
+
+unlock7 () {
+    printheader
+    echo "Unlocking Lg L7 $DEVICE"
+    echo " "
+    adb reboot bootloader
+    fastboot boot $L7/recovery/recovery.img
+    adb wait-for-device
+    adb shell mkdir $DIR
+    adb push $L7/bootloader/emmc_appsboot.bin $DIR
+    adb shell dd if=/sdcard/tmp/emmc_appsboot.bin of=/dev/block/mmcblk0p5 bs=4096
+    adb reboot bootloader
+    fastboot flash recovery $L7/recovery/recovery.img
+    fastboot boot $L7/recovery/recovery.img
+    adb wait-for-device
+    adb shell rm -rf /cache/recovery
+    adb shell mkdir /cache/recovery
+    adb shell "echo -e '--sideload' > /cache/recovery/command"
+    adb reboot bootloader
+    fastboot boot $L7/recovery/recovery.img
+    adb wait-for-device
+    adb sideload $ROOTZIP
+    echo "Finishing..."
+    read -p "When screen become blank with recovery background, press ENTER"
+    adb reboot
+    echo "Unlocked !"
+    home
+    fi
+    }
+
+unlock32 () {
+    read -p "Not working now..."
+    home
+    fi
     }
