@@ -14,6 +14,9 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+
+#      */*****   var    *****\*
+
 L=~/Lg-LManager
 L3=~/Lg-LManager/e400
 L5=~/Lg-LManager/e610
@@ -28,7 +31,10 @@ APK=
 ZIP=
 ROM=
 DIR=/sdcard/tmp
-#----------------------------------------------------------------------------------------
+BACKUPID=
+
+
+#      */*****   SETUP    *****\*
 
 
 detect_device() {
@@ -370,3 +376,53 @@ unlock32 () {
     home
     fi
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# */*** Update ***\*
+
+if [[ "$ACTION" == HELP ]]; then
+    clear
+    echo "HELP" 
+    print_usage
+elif [[ "$ACTION" == UPDATE ]]; then
+    update-root
+    update-recovery
+    update-bootloader
+    
+fi
