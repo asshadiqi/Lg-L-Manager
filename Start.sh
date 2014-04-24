@@ -23,6 +23,10 @@ ROOTURL=http://download.chainfire.eu/372/SuperSU/UPDATE-SuperSU-v1.86.zip?retrie
 ROOTZIP=~/res/root.zip
 DEVICE=
 ACTION=$1
+Choice=
+APK=
+ZIP=
+ROM=
 
 #----------------------------------------------------------------------------------------
 
@@ -60,6 +64,7 @@ headerprint () {
   echo "# LG L Manager                 #"
   echo "# Selected device: $DEVICE        #"
   echo "################################"
+  echo " "
   fi
 }
 
@@ -115,3 +120,76 @@ home () {
   fi
   home
   }
+
+#      */*****   Install    *****\*
+
+install () {
+    headerprint
+    echo "Installer"
+    echo " "
+    echo "1- Apk       3- Mod/Gapps"
+    echo "2- Rom"
+    echo " "
+    echo "0- Go back"
+  read -p "?" Choice
+  if  [ "$Choice" = "1" ]
+    then
+      apk
+      break
+  elif  [ "$Choice" = "2" ]
+    then
+      rom
+      break
+  elif  [ "$Choice" = "3" ]
+    then
+      zip
+      break
+  elif  [ "$Choice" = "0" ]
+    then
+      home
+      break
+  else
+  echo "Wrong input"
+  fi
+  install
+  }
+
+apk () {
+    headerprint
+    echo "Apk Installer"
+    echo " "
+    read -p "Drag your apk here and press ENTER: " APK
+    adb install $APK
+    sleep 2
+    home
+    }
+
+rom () {
+    if  [ "$DEVICE" = "E400" ]
+      then
+        rom3
+        break
+    else
+    rom2
+    }
+
+rom2 () {
+    headerprint
+    echo "Rom installer"
+    adb reboot recovery
+    echo "Wipe /data now!"
+    read -p "When you've wiped /data press ENTER"
+    adb shell  rm -rf /cache/recovery
+    adb shell mkdir /cache/recovery
+    adb shell "echo -e '--sideload' > /cache/recovery/command"
+    adb reboot recovery
+    adb wait-for-device
+    read -p "Drag your zip here and press ENTER: " ROM
+    adb sideload $ROM
+    echo "Now wait until your phone install rom, about 3 mins"
+    sleep 360
+    read -p "If your phone screen is blank with recovery image, press enter or wait"
+    adb reboot
+    echo "Done!"
+    home
+    }
