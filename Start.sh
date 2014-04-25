@@ -32,7 +32,11 @@ ZIP=
 ROM=
 DIR=/sdcard/tmp
 BACKUPID=
-
+BACKUPDIR=~/Lg-LManager/Backups
+BACK=echo "0- Go Back"
+X=echo " "
+FILE=
+CAMDIR=/sdcard/DCIM/Camera
 
 #      */*****   SETUP    *****\*
 
@@ -47,6 +51,9 @@ detect_device() {
     fi
 
     if [[ "$DEVICE" == e400* ]]; then
+      echo "Detected connected Lg L3"
+      DEVICE=E400
+    elif [[ "$DEVICE" == e0* ]]; then
       echo "Detected connected Lg L3"
       DEVICE=E400
     elif [[ "$DEVICE" == e610* ]]; then
@@ -70,7 +77,7 @@ headerprint () {
   echo "# LG L Manager                 #"
   echo "# Selected device: $DEVICE        #"
   echo "################################"
-  echo " "
+  $X
   fi
 }
 
@@ -78,9 +85,8 @@ home () {
   echo "1- Install         4- Full Unlock"
   echo "2- Backup          5- Shell"
   echo "3- Push and Pull"
-  echo " "
+  $X
   echo "0- Exit            00-About"
-  echo " "
   read -p "?" Choice
   if  [ "$Choice" = "1" ]
     then
@@ -123,7 +129,6 @@ home () {
       break
   else
   echo "Wrong input"
-  fi
   home
   fi
   }
@@ -133,11 +138,11 @@ home () {
 install () {
     headerprint
     echo "Installer"
-    echo " "
+    $X
     echo "1- Apk       3- Mod/Gapps"
     echo "2- Rom"
-    echo " "
-    echo "0- Go back"
+    $X
+    $BACK
   read -p "?" Choice
   if  [ "$Choice" = "1" ]
     then
@@ -157,7 +162,6 @@ install () {
       break
   else
   echo "Wrong input"
-  fi
   install
   fi
   }
@@ -165,7 +169,7 @@ install () {
 apk () {
     headerprint
     echo "Apk Installer"
-    echo " "
+    $X
     read -p "Drag your apk here and press ENTER: " APK
     adb install $APK
     sleep 2
@@ -180,6 +184,7 @@ rom () {
         break
     else
     rom2
+    break
     fi
     }
 
@@ -230,6 +235,7 @@ zip () {
         break
     else
     zip2
+    break
     fi
     }
 
@@ -297,7 +303,7 @@ unlock () {
 unlock3 () {
     printheader
     echo "Unlocking Lg L3 $DEVICE"
-    echo " "
+    $X
     adb reboot bootloader
     fastboot flash recovery $L3/recovery/recovery.img
     fastboot boot $L3/recovery/recovery.img
@@ -316,7 +322,7 @@ unlock3 () {
 unlock5 () {
     printheader
     echo "Unlocking Lg L5 $DEVICE"
-    echo " "
+    $X
     adb reboot bootloader
     fastboot boot $L5/recovery/recovery.img
     adb wait-for-device
@@ -345,7 +351,7 @@ unlock5 () {
 unlock7 () {
     printheader
     echo "Unlocking Lg L7 $DEVICE"
-    echo " "
+    $X
     adb reboot bootloader
     fastboot boot $L7/recovery/recovery.img
     adb wait-for-device
@@ -378,39 +384,124 @@ unlock32 () {
     }
 
 
+# */*** Other ***\*
+
+
+shelll () {
+    printheader
+    echo "Shell"
+    $X
+    echo "Press Ctrl+C when you want to quit"
+    $X
+    adb shell
+    read -p "Press Enter to quit"
+    home
+    fi
+    }
 
 
 
+back1 () {
+    printheader
+    echo "Backup Manager"
+    $X
+    echo "1- Backup    2-Restore"
+    $X
+    $BACK
+    read -p "?" Choice
+    if [ "$Choice" = "1" ]
+      then
+        backup
+        break
+    elif [ "$Choice" = "2" ]
+      then
+        restore
+        break
+    elif [ "$Choice" = "0" ]
+      then
+        home
+        break
+    else
+    echo "Wrong input"
+    fi
+    back1
+    fi
+    }
 
+backup () {
+    printheader
+    echo "Backup"
+    $X
+    read -p "Type backup name (NO SPACES): " BACKUPID
+    $X
+    echo "Enter password on your phone and let it work"
+    adb backup -nosystem -noshared -apk -f $BACKFOLDER/$BACKUPID.ab
+    read -p "Done! Press Enter"
+    home
+    fi
+    }
 
+restore () {
+    printheader
+    echo "Restore"
+    $X
+    read -p "Type backup name: " BACKUPID
+    $X
+    echo "On your phone, type password and let it works"
+    adb restore $BACKFOLDER/$BACKUPID.ab
+    read -p "Done! Press Enter"
+    home
+    fi
+    }
 
+pnp () {
+    printheader
+    echo "Push and Pull"
+    $X
+    echo "1- Push a file "
+    echo "2- Import Camera Photos"
+    $X
+    $BACK
+    read -p "?" Choice
+    if [ "$Choice" = "1" ]
+      then
+        push
+        break
+    elif [ "$Choice" = "2" ]
+      then
+        camera
+        break
+    elif [ "$Choice" = "0" ]
+      then
+        home
+        break
+    else
+    echo "Wrong input"
+    sleep 2
+    pnp
+    fi
+    }
+    
+push () {
+    printheader
+    echo "Push a file"
+    $X
+    read -p "Drag your file here (one): " FILE
+    adb push $FILE /sdcard
+    read -p "Press ENTER"
+    home
+    fi
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+camera () {
+    printheader
+    echo "Import Camera Photos"
+    read -p "Press enter to start"
+    adb pull $CAMDIR $L/Camera
+    read -p "Press ENTER"
+    home
+    fi
+    }
 
 
 
@@ -418,11 +509,11 @@ unlock32 () {
 
 if [[ "$ACTION" == HELP ]]; then
     clear
-    echo "HELP" 
-    print_usage
+    printusage
+    break
 elif [[ "$ACTION" == UPDATE ]]; then
-    update-root
-    update-recovery
-    update-bootloader
-    
+    clear
+    update
+    break
+
 fi
