@@ -290,6 +290,7 @@ if %DEVICE%==3 goto :unlock7
 if %DEVICE%==4 goto :unlock32
 
 :unlock3
+#this is pretty easy, with an unlocked bootloader you can have fun
 cls
 echo ################################
 echo # LG L Manager                 #
@@ -304,15 +305,11 @@ echo Unlocker by linuxxxx
 @fastboot flash recovery C:\Lg-Manager\L3\recovery\recovery.img
 @fastboot boot C:\Lg-Manager\L3\recovery\recovery.img
 @adb wait-for-device
-@adb shell rm -rf /cache/recovery
-@adb shell mkdir /cache/recovery
-@adb shell "echo -e '--sideload' > /cache/recovery/command"
-@adb reboot bootloader
-@fastboot boot C:\Lg-Manager\L3\recovery\recovery.img
-@adb wait-for-device
-@adb sideload C:\Lg-Manager\res\root.zip
+# :(  no recovery that supports adb shell and sideload :( 
+@adb push %ROOT% /sdcard
+echo select install zip -> from internal sd -> root.zip -> yes
 echo Now phone will complete unlock.
-echo When it will become blank / says done
+echo When it says Done, 
 pause
 @adb reboot
 echo Done! Succesfully unlocked!
@@ -330,13 +327,17 @@ echo.
 echo Unlocker by linuxxxx
 @adb reboot bootloader
 @fastboot devices
+#dunno if it's possible to run fastboot boot with a locked bootloader, I own only factory unlocked devices so i cannot test. Theorically it should work, it's not a flash but just a boot.
 @fastboot boot C:\Lg-Manager\L5\recovery\recovery.img
 @adb wait-for-device
+#this way i'll get root access so i can write bootloader
 @adb push C:\Lg-Manager\L5\bootloader\emmc_appsboot.bin /sdcard/
 @adb shell dd if=/sdcard/emmc_appsboot.bin of=/dev/block/mmcblk0p5
 @adb reboot bootloader
 @fastboot devices
+#now i write recovery (classic way) and everything without root
 @fastboot flash recovery C:\Lg-Manager\L5\recovery\recovery.img
+#i used this because it's faster than fb reboot and adb reboot recovery eccc...
 @fastboot boot C:\Lg-Manager\L5\recovery\recovery.img
 @adb shell rm -rf /cache/recovery
 @adb shell mkdir /cache/recovery
@@ -365,14 +366,19 @@ echo.
 echo Unlocker by linuxxxx
 @adb reboot bootloader
 @fastboot devices
+#dunno if it's possible to run fastboot boot with a locked bootloader, I own only factory unlocked devices so i cannot test. Theorically it should work, it's not a flash but just a boot.
 @fastboot boot C:\Lg-Manager\L7\recovery\recovery.img
+#this way i'll get root access so i can write bootloader
 @adb wait-for-device
 @adb push C:\Lg-Manager\L7\bootloader\emmc_appsboot.bin /sdcard/
 @adb shell dd if=/sdcard/emmc_appsboot.bin of=/dev/block/mmcblk0p5 bs=4096
 @adb reboot bootloader
 @fastboot devices
+#now i write recovery (classic way) and everything without root
 @fastboot flash recovery C:\Lg-Manager\L7\recovery\recovery.img
+#i used this because it's faster than fb reboot and adb reboot recovery eccc...
 @fastboot boot C:\Lg-Manager\L7\recovery\recovery.img
+#let's make a sideload
 @adb shell rm -rf /cache/recovery
 @adb shell mkdir /cache/recovery
 @adb shell "echo -e '--sideload' > /cache/recovery/command"
@@ -389,6 +395,10 @@ goto :startup
 
 
 :unlock32
+#apparently this device has no bootloader mode...
+#maybe adb reboot oem-unlock may boot into a fastboot mode like other lg devices...
+#until i'll find out a way to boot into fastboot mode there's no way to run the unlocker
+#adb reboot-bootloader boots into a "strange" way for a few secs, but neither adb and fb won't recongise it... 
 cls
 echo ################################
 echo # LG L Manager                 #
@@ -398,7 +408,8 @@ echo.
 echo Full unlock - Lg l3 II e430
 echo.
 echo Unlocker by linuxxxx
-@adb reboot bootloader
+#not sure it will work.... at least it will perform a wipe /data if there's the stock recovery, or boots into cwm if installed.
+@adb reboot oem-unlock
 @fastboot devices
 @fastboot boot C:\Lg-Manager\L32\recovery\recovery.img
 @adb wait-for-device
