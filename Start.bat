@@ -259,7 +259,7 @@ echo Import Photos and Videos
 echo.
 echo Files will be placed inside C:\Lg-Manager\Userfiles\Camera
 pause
-@adb pull /sdcard/DCIM/Camera C:\Lg-Manager\Userfiles\
+@adb pull /sdcard/DCIM/Camera C:\Lg-Manager\Userfiles
 pause
 goto :starup
 
@@ -332,7 +332,7 @@ echo Unlocker by linuxxxx
 @fastboot devices
 @fastboot boot C:\Lg-Manager\L5\recovery\recovery.img
 @adb wait-for-device
-@adb push C:\Lg-Manager\L5/bootloader/emmc_appsboot.bin /sdcard/
+@adb push C:\Lg-Manager\L5\bootloader\emmc_appsboot.bin /sdcard/
 @adb shell dd if=/sdcard/emmc_appsboot.bin of=/dev/block/mmcblk0p5
 @adb reboot bootloader
 @fastboot devices
@@ -367,7 +367,7 @@ echo Unlocker by linuxxxx
 @fastboot devices
 @fastboot boot C:\Lg-Manager\L7\recovery\recovery.img
 @adb wait-for-device
-@adb push C:\Lg-Manager\L7/bootloader/emmc_appsboot.bin /sdcard/
+@adb push C:\Lg-Manager\L7\bootloader\emmc_appsboot.bin /sdcard/
 @adb shell dd if=/sdcard/emmc_appsboot.bin of=/dev/block/mmcblk0p5 bs=4096
 @adb reboot bootloader
 @fastboot devices
