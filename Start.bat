@@ -88,8 +88,21 @@ echo.
 echo Rom Installer
 echo.
 @adb reboot recovery
-echo Wipe /data if needed and enable sideload
 SET /P ROM= Drag your zip file here, then press Enter:  
+@adb reboot recovery
+@adb wait-for-device
+@adb shell rm -rf /cache/recovery
+@adb shell mkdir /cache/recovery
+@adb shell "echo -e '--wipe_data' > /cache/recovery/command"
+@adb reboot recovery
+echo "When screen becomes blank,"
+pause
+@adb wait-for-device
+@adb shell rm -rf /cache/recovery
+@adb shell mkdir /cache/recovery
+@adb shell "echo -e '--sideload' > /cache/recovery/command"
+@adb reboot recovery
+@adb wait-for-device
 adb sideload %ROM%
 echo Phone will apply the update, do not reboot it untit it ends
 pause
