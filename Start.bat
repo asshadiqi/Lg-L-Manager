@@ -72,7 +72,7 @@ echo ################################
 echo.
 echo Apk installer
 echo.
-SET /P APK= Drag your apk file here, then press Enter: 
+SET /P APK= Drag your apk file here, then press Enter:
 adb install %APK%
 pause
 goto :startup
@@ -88,7 +88,7 @@ echo.
 echo Rom Installer
 echo.
 @adb reboot recovery
-SET /P ROM= Drag your zip file here, then press Enter:  
+SET /P ROM= Drag your zip file here, then press Enter:
 @adb reboot recovery
 @adb wait-for-device
 @adb shell rm -rf /cache/recovery
@@ -118,7 +118,7 @@ echo ################################
 echo.
 echo Mod Installer
 echo.
-SET /P MOD= Drag your zip file here, then press Enter:  
+SET /P MOD= Drag your zip file here, then press Enter:
 @adb reboot recovery
 @adb wait-for-device
 @adb shell rm -rf /cache/recovery
@@ -170,7 +170,7 @@ echo Lg L3 e400 = 1
 echo Lg L5 e610 = 2
 echo Lg L7 p700 = 3
 echo Lg L3 e400 = 4
-set /p DEVICE= [1] [2] [3] [4]: 
+set /p DEVICE= [1] [2] [3] [4]:
 goto :startup
 
 
@@ -205,7 +205,7 @@ echo ################################
 echo.
 echo Backup
 echo.
-set /p BAK=Write here your backup name (NO spaces): 
+set /p BAK=Write here your backup name (NO spaces):
 @adb backup -nosystem -noshared -apk -f C:\Lg-Manager\Backups\%BAK%.ab
 echo Select your password (on phone) if you want, and wait untilt it works.
 pause
@@ -220,7 +220,7 @@ echo ################################
 echo.
 echo Restore
 echo.
-set /p BAK=Write here your backup name (NO spaces): 
+set /p BAK=Write here your backup name (NO spaces):
 @adb restore C:\Lg-Manager\Backups\%BAK%.ab
 echo Type your password (on phone), and wait untilt it works.
 pause
@@ -256,7 +256,7 @@ echo ################################
 echo.
 echo Push
 echo.
-set /p PUSH=Drag and drop your file here (one only): 
+set /p PUSH=Drag and drop your file here (one only):
 @adb push %PUSH& /sdcard/
 pause
 goto :starup
@@ -316,15 +316,17 @@ echo Unlocker by linuxxxx
 @adb reboot bootloader
 @fastboot devices
 @fastboot flash recovery C:\Lg-Manager\L3\recovery\recovery.img
-@fastboot boot C:\Lg-Manager\L3\recovery\recovery.img
+@fastboot reboot
 @adb wait-for-device
-# :(  no recovery that supports adb shell and sideload :( 
-@adb push %ROOT% /sdcard
-echo select install zip -> from internal sd -> root.zip -> yes
+@adb reboot recovery
+@adb wait-for-device
+@adb push %ROOT% /sdcard/update.zip
+@adb shell rm -rf /cache/recovery
+@adb shell mkdir /cache/recovery
+@adb shell "echo -e 'update_package' > /cache/recovery/command"
+@adb reboot recovery
 echo Now phone will complete unlock.
-echo When it says Done, 
 pause
-@adb reboot
 echo Done! Succesfully unlocked!
 goto :startup
 
@@ -360,9 +362,7 @@ echo Unlocker by linuxxxx
 @adb wait-for-device
 @adb sideload %ROOT%
 echo Now phone will complete unlock.
-echo When it will become blank / says done
 pause
-@adb reboot
 echo Done! Succesfully unlocked!
 goto :startup
 
@@ -400,9 +400,7 @@ echo Unlocker by linuxxxx
 @adb wait-for-device
 @adb sideload %ROOT%
 echo Now phone will complete unlock.
-echo When it will become blank / says done
 pause
-@adb reboot
 echo Done! Succesfully unlocked!
 goto :startup
 
@@ -411,7 +409,7 @@ goto :startup
 #apparently this device has no bootloader mode...
 #maybe adb reboot oem-unlock may boot into a fastboot mode like other lg devices...
 #until i'll find out a way to boot into fastboot mode there's no way to run the unlocker
-#adb reboot-bootloader boots into a "strange" way for a few secs, but neither adb and fb won't recongise it... 
+#adb reboot-bootloader boots into a "strange" way for a few secs, but neither adb and fb won't recongise it...
 cls
 echo ################################
 echo # LG L Manager                 #
@@ -422,9 +420,11 @@ echo Full unlock - Lg l3 II e430
 echo.
 echo Unlocker by linuxxxx
 #not sure it will work.... at least it will perform a wipe /data if there's the stock recovery, or boots into cwm if installed.
-@adb reboot oem-unlock
-@fastboot devices
-@fastboot boot C:\Lg-Manager\L32\recovery\recovery.img
+#@adb reboot oem-unlock
+#@fastboot devices
+#@fastboot boot C:\Lg-Manager\L32\recovery\recovery.img
+adb root
+@adb remount
 @adb wait-for-device
 @adb push C:\Lg-Manager\L32/bootloader/lock.bin /sdcard
 @adb push C:\Lg-Manager\L32/bootloader/boot.img /sdcard
@@ -432,21 +432,15 @@ echo Unlocker by linuxxxx
 @adb shell dd if=/sdcard/lock.bin of=/dev/block/platform/msm_sdcc.3/mmcblk0p5
 @adb shell dd if=/sdcard/boot.img of=/dev/block/platform/msm_sdcc.3/mmcblk0p9
 @adb shell dd if=/sdcard/recovery.img of=/dev/block/platform/msm_sdcc.3/mmcblk0p17
-@adb reboot bootloader
-@fastboot devices
-@fastboot flash recovery C:\Lg-Manager\L32\recovery\recovery.img
-@fastboot boot C:\Lg-Manager\L32\recovery\recovery.img
+#@adb reboot recovery
 @adb shell rm -rf /cache/recovery
 @adb shell mkdir /cache/recovery
 @adb shell "echo -e '--sideload' > /cache/recovery/command"
-@adb reboot bootloader
-@fastboot boot C:\Lg-Manager\L32\recovery\recovery.img
+@adb reboot recovery
 @adb wait-for-device
 @adb sideload %ROOT%
 echo Now phone will complete unlock.
-echo When it will become blank / says done
 pause
-@adb reboot
 echo Done! Succesfully unlocked!
 goto :startup
 
