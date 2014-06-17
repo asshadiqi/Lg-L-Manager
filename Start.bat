@@ -516,7 +516,7 @@ echo # LG L Manager                 #
 echo # Selected device: %DEVICE%    #
 echo ################################
 echo.
-echo Full unlock - Lg l7 II p710
+echo Full unlock - Lg l9 II d605
 echo.
 echo Unlocker by linuxxxx
 ## > Now this currently need that the phone is rooted, waiting for a way to get a fastboot interface
@@ -551,8 +551,7 @@ echo About
 echo.
 echo - License: Gpl V2
 echo - Developer: Joey Rizzoli
-echo - Device Supported: Lg L3, L5, L7, L3 II
-echo - Incoming Support: Lg L5 II, Lg L7 II
+echo - Device Supported: Lg L3, L5, L7, L3 II, L4 II, L5 II, L7 II, L9 II
 echo - Disclaimer: this program may void your warranty. Developer disclaim every
 echo               damage caused from this program on your device.
 echo - Thanks: Aosp, some xda members (do not ask names), Lg, my devices
