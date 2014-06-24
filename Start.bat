@@ -415,10 +415,10 @@ goto :startup
 
 
 :unlock32
-#apparently this device has no bootloader mode...
-#maybe adb reboot oem-unlock may boot into a fastboot mode like other lg devices...
-#until i'll find out a way to boot into fastboot mode there's no way to run the unlocker
-#adb reboot-bootloader boots into a "strange" way for a few secs, but neither adb and fb won't recongise it...
+# apparently this device has no bootloader mode...
+# maybe adb reboot oem-unlock may boot into a fastboot mode like other lg devices...
+# until i'll find out a way to boot into fastboot mode there's no way to run the unlocker
+# adb reboot-bootloader boots into a "strange" interface for a few secs, but neither adb and fb doesn't recongise it...
 cls
 echo ################################
 echo # LG L Manager                 #
@@ -428,18 +428,16 @@ echo.
 echo Full unlock - Lg l3 II e430
 echo.
 echo Unlocker by linuxxxx
-## > Now this currently need that the phone is rooted, waiting for a way to get a fastboot interface
-@adb root
-@adb wait-for-device
+# > Now this currently need that the phone is rooted, waiting for a way to get a fastboot interface
 @adb push C:\Lg-Manager\L32\bootloader\lock.bin /sdcard
 @adb push C:\Lg-Manager\L32\bootloader\boot.img /sdcard
 @adb push C:\Lg-Manager\L32\recovery\recovery.img /sdcard
-@adb shell dd if=/sdcard/lock.bin of=/dev/block/platform/msm_sdcc.3/mmcblk0p5
-@adb shell dd if=/sdcard/boot.img of=/dev/block/platform/msm_sdcc.3/mmcblk0p9
-@adb shell dd if=/sdcard/recovery.img of=/dev/block/platform/msm_sdcc.3/mmcblk0p17
-@adb shell rm -rf /cache/recovery
-@adb shell mkdir /cache/recovery
-@adb shell "echo -e '--sideload' > /cache/recovery/command"
+@adb shell su -c 'dd if=/sdcard/lock.bin of=/dev/block/platform/msm_sdcc.3/mmcblk0p5'
+@adb shell su -c 'dd if=/sdcard/boot.img of=/dev/block/platform/msm_sdcc.3/mmcblk0p9'
+@adb shell su -c 'dd if=/sdcard/recovery.img of=/dev/block/platform/msm_sdcc.3/mmcblk0p17'
+@adb shell su -c 'rm -rf /cache/recovery'
+@adb shell su -c' mkdir /cache/recovery'
+@adb shell su -c '"echo -e '--sideload' > /cache/recovery/command"'
 @adb reboot recovery
 @adb wait-for-device
 @adb sideload %ROOT%
@@ -458,18 +456,15 @@ echo.
 echo Full unlock - Lg l4 II and Lg l5 II
 echo.
 echo Unlocker by linuxxxx
-## > Now this currently need that the phone is rooted, waiting for a way to get a fastboot interface
-## > There's no way to unlock bootloader yet
-@adb root
-@adb wait-for-device
+# > Now this currently need that the phone is rooted, waiting for a way to get a fastboot interface
+# > There's no way to unlock bootloader yet
 @adb push C:\Lg-Manager\L52\unlock\system /sdcard/system
 @adb push C:\Lg-Manager\L52\unlock\Unlock.sh /sdcard
-#Dunno if the file's already the right permission to be executed with ./ so let's use the horrible sh [file]
-@adb shell sh /sdcard/Unlock.sh
-@adb shell rm -rf /sdcard/system /sdcard/Unlock.sh
-@adb shell rm -rf /cache/recovery
-@adb shell mkdir /cache/recovery
-@adb shell "echo -e '--sideload' > /cache/recovery/command"
+@adb shell su -c 'sh /sdcard/Unlock.sh'
+@adb shell su -c 'rm -rf /sdcard/system /sdcard/Unlock.sh'
+@adb shell su -c 'rm -rf /cache/recovery'
+@adb shell su -c 'mkdir /cache/recovery'
+@adb shell su -c '"echo -e '--sideload' > /cache/recovery/command"'
 @adb reboot recovery
 @adb wait-for-device
 @adb sideload %ROOT%
@@ -489,18 +484,16 @@ echo.
 echo Full unlock - Lg l7 II p710
 echo.
 echo Unlocker by linuxxxx
-## > Now this currently need that the phone is rooted, waiting for a way to get a fastboot interface
-@adb root
-@adb wait-for-device
+# > Now this currently need that the phone is rooted, waiting for a way to get a fastboot interface
 @adb push C:\Lg-Manager\L72\bootloader\APPSSBL.bin /sdcard
 @adb push C:\Lg-Manager\L72\bootloader\recovery.img /sdcard
-@adb shell dd if=/sdcard/APPSSBL.bin of=/dev/block/mmcblk0p5
-@adb shell dd if=/sdcard/recovery.img of=/dev/block/mmcblk0p17
+@adb shell su -c 'dd if=/sdcard/APPSSBL.bin of=/dev/block/mmcblk0p5'
+@adb shell su -c 'dd if=/sdcard/recovery.img of=/dev/block/mmcblk0p17'
 @adb shell rm /sdcard/APPSSBL.bin
 @adb shell rm /sdcard/recovery.img
-@adb shell rm -rf /cache/recovery
-@adb shell mkdir /cache/recovery
-@adb shell "echo -e '--sideload' > /cache/recovery/command"
+@adb shell su -c 'rm -rf /cache/recovery'
+@adb shell su -c 'mkdir /cache/recovery'
+@adb shell su -c '"echo -e '--sideload' > /cache/recovery/command"'
 @adb reboot recovery
 @adb wait-for-device
 @adb sideload %ROOT%
@@ -519,17 +512,15 @@ echo.
 echo Full unlock - Lg l9 II d605
 echo.
 echo Unlocker by linuxxxx
-## > Now this currently need that the phone is rooted, waiting for a way to get a fastboot interface
-@adb root
-@adb wait-for-device
+# > Now this currently need that the phone is rooted, waiting for a way to get a fastboot interface
 @adb push C:\Lg-Manager\L92\recovery\loki_flash /sdcard
 @adb push C:\Lg-Manager\L92\recovery\recovery.img /sdcard
-@adb shell chmod 777/ sdcard/locki_flash
-@adb shell ./sdcard/locki_flash recovery /sdcard/recovery.img
+@adb shell su -c 'chmod 777/ sdcard/locki_flash'
+@adb shell su -c './sdcard/locki_flash recovery /sdcard/recovery.img'
 @adb shell rm /sdcard/locki_flash /sdcard/recovery.img
-@adb shell rm -rf /cache/recovery
-@adb shell mkdir /cache/recovery
-@adb shell "echo -e '--sideload' > /cache/recovery/command"
+@adb shell su -c 'rm -rf /cache/recovery'
+@adb shell su -c 'mkdir /cache/recovery'
+@adb shell su -c '"echo -e '--sideload' > /cache/recovery/command"'
 @adb reboot recovery
 @adb wait-for-device
 @adb sideload %ROOT%
